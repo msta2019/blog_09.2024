@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    Список категорій
+    {%for c in category_list%}
+    <div>
+        <a href="/categories/{{c[0]}}">
+            {{c[1]}} 
+        </a>
+    </div>
+    {%endfor%}
+{%endblock%}
