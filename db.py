@@ -1,6 +1,6 @@
 import sqlite3
 
-db_name = "blog.db"
+db_name = "quiz.db"
 connection = None
 cursor = None
 
@@ -9,29 +9,46 @@ def open():
     connection = sqlite3.connect(db_name)
     cursor = connection.cursor()
 
-
-
 def close():
     cursor.close()
     connection.close()
 
-def get_categories():
+def get_questions(quiz_id):
     open()
-    cursor.execute("SELECT * FROM category")
-    res = cursor.fetchall()
+    SQL = ''' 
+        SELECT question.question,
+                question.answer,
+                question.wrong1,
+                question.wrong2,
+                question.wrong3,
+                quiz.name
+        FROM question, quiz, quiz_connect
+        WHERE question_id == quiz_connect.question_id
+        AND quiz.id == quiz_connect.quiz_id
+        AND quiz_connect.quiz_id == ?;
+    '''
+    cursor.execute(SQL, [quiz_id])
+    result = cursor.fetchall()
     close()
-    return res
+    return result
 
-def get_posts():
+def get_quizes():
     open()
-    cursor.execute("SELECT * FROM post")
-    res = cursor.fetchall()
+    SQL = '''
+            SELECT * FROM quiz;
+    '''
+    cursor.execute(SQL)
+    result = cursor.fetchall()
     close()
-    return res
+    return result
 
-def get_posts_by_category(category_id):
+if __name__ == "__main__":
     open()
-    cursor.execute("SELECT * FROM post WHERE category_id = ?;", [category_id])
-    res = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM quiz")
+    print(cursor.fetchall())
+
+    cursor.execute("SELECT * FROM question")
+    print(cursor.fetchall())
+
     close()
-    return res

@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My blog</title>
+    <title>SAIT</title>
+    <link rel="stylesheet" href="
+        {{url_for('static', filename='style.css')}}
+    "> 
 </head>
 <body>
-    {% include 'menu.html' %}
-
+    <h1>Ласкаво просимо на вікторину.</h1>
     {% block content %}
-        
-    {% endblock %}
+    {%endblock%}   
+
+    <h4>Дякую за увагу.</h4>
 </body>
 </html>
