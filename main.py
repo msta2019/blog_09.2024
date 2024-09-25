@@ -1,64 +1,66 @@
-from flask import Flask, redirect, url_for, request, render_template
-from random import randint
+from flask import Flask, render_template, request, redirect
 import db
 
 app = Flask(__name__)
-quiz = 0
-last_question = 0
-score = 0
 
+@app.route("/")
 def index():
-    global quiz, last_question, score
-    last_question = 0
-    score = 0
-    quiz = randint(1,3)
-    print(quiz)
-
-    if request.method == "GET":
-    
+    return render_template("base.html")
 
 
+@app.route ("/categories")
+def categories_list():
+    return render_template("category_list.html", category_list=db.get_categories())
 
-        return render_template("index.html", quizes=db.get_quizes())
+@app.route("/posts", methods=["GET","POST"])
+def posts():
+    if request.method == "POST":
+        category_id = request.form.get("category_id")
+        text = request.form.get("text")
+        #validate category_id
+        db.addPost(category_id, text)
+         
+        return redirect(f"/posts")
+    return render_template("post_list.html", post_list=db.get_posts())
 
-        
-    elif request.method == "POST":
-        quiz = request.form.get("quiz")
-        return redirect(url_for("test"))
+@app.route("/categories/<id>", methods=["GET","POST"])
+def posts_by_category(id):
 
 
-def test():
-    global last_question, score
-    try:
-        result = db.get_questions(quiz)[last_question]
-    except IndexError:
-        return redirect(url_for("result"))
-    
-    if request.method == "GET":
-
-        return render_template("test.html", question=result)
-    
 
     if request.method == "POST":
-        last_question+=1
-        user_answer = request.form.get("user_answer")
-        text = ""
-        if user_answer == result[1]:
-            text =  "Правильно"
-            score += 1
-        else:
-            text =  "Неправильно"
-            score -= 1
-        return render_template("test.html", result_text=text)
-        
+        category_id = request.form.get("category_id")
+        text = request.form.get("text")
+        #validate category_id
+        db.add_post(category_id, text)
+         
+        return redirect(f"/categories/{id}")
+    return render_template("post_list.html", post_list =db.get_posts_by_category(id), 
+                           category_page=True
+                           )
 
-def result():
-    return render_template("result.html", score_text = score)
+@app.route("/post/delete/<id>")
+@app.route("/post/delete/<id>/<category_id>")
+def delete_post(id, category_id=None):
+
+    db.deletePost(id)
+
+    if category_id:
+        return redirect(f"/categories/{category_id}")
+    return redirect("/posts")
 
 
-app.add_url_rule("/", "index", index, methods=["GET", "POST"])
-app.add_url_rule("/test", "test", test, methods=["GET", "POST"])
-app.add_url_rule("/result", "result", result)
+@app.route("/post/view/<id>")
+def post_view(id):
+    return render_template("post_view.html", 
+                           post= db.getOnePost(id)
+                           
+                           )
+
+
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug = True, host = "0.0.0.0")
+
+

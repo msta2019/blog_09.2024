@@ -1,3 +1,24 @@
 body{
-    background: rgb(11, 179, 165);
+    background: #ddd;
+}
+.list-group-item a{
+    text-decoration: none;
+    color: #333;
+}
+
+.card-list {
+    width: fit-content;
+    margin: 15px;
+}
+
+.delete-post {
+    float: right;
+    color: red;
+    border: 1px solid red;
+    border-radius: 15px
+}
+.date {
+    float: right;
+    color: grey;
+    font-size: smaller;
 }

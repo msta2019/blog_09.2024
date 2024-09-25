@@ -1,9 +1,42 @@
 {% extends 'base.html' %}
 {% block content%}
-    Список постів
-    {%for p in post_list%}
-    <div>
-        {{p}}
+<div class="card card-list">
+    <div class="card-header">
+        Список постів
     </div>
-    {%endfor%}
+    <ul class="list-grop list-group-flush">
+        {%for p in post_list%}
+            <a href = "/post/view/{{p[0]}}">
+                <li class="list-group-item">
+                    <p>
+                        {{p[2]}}
+
+
+
+                        {% if category_page%}
+                        
+                            <a href = "/post/delete/{{p[0]}}/{{p[1]}}">
+                                <span class = "delete-post">X</span>
+                            </a>
+                        {%else%}
+                            <a href = "/post/delete/{{p[0]}}"></a>
+                                <span class = "delete-post">X</span>
+                            </a>
+                        {%endif%}
+                    </p>
+
+                    <span class = "date">{{p[-1]}}</span>
+                </li>
+            </a>
+        {%endfor%}
+    </ul>
+</div>
+<div class="mb-3">
+    <form method="post">
+        <label>Номер категорії</label>
+        <input type="number" name="category_id">
+        <textarea class="form-control" name ="text"> Текст нового поста </textarea>
+        <input type="submit" value="Створити пост" class="btn btn-success">
+    </form>
+</div>
 {%endblock%}

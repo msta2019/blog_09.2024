@@ -1,6 +1,6 @@
 import sqlite3
 
-db_name = "quiz.db"
+db_name = "blog.db"
 connection = None
 cursor = None
 
@@ -9,46 +9,49 @@ def open():
     connection = sqlite3.connect(db_name)
     cursor = connection.cursor()
 
+
+
 def close():
     cursor.close()
     connection.close()
 
-def get_questions(quiz_id):
+def get_categories():
     open()
-    SQL = ''' 
-        SELECT question.question,
-                question.answer,
-                question.wrong1,
-                question.wrong2,
-                question.wrong3,
-                quiz.name
-        FROM question, quiz, quiz_connect
-        WHERE question_id == quiz_connect.question_id
-        AND quiz.id == quiz_connect.quiz_id
-        AND quiz_connect.quiz_id == ?;
-    '''
-    cursor.execute(SQL, [quiz_id])
-    result = cursor.fetchall()
+    cursor.execute("SELECT * FROM category")
+    res = cursor.fetchall()
     close()
-    return result
+    return res
 
-def get_quizes():
+def get_posts():
     open()
-    SQL = '''
-            SELECT * FROM quiz;
-    '''
-    cursor.execute(SQL)
-    result = cursor.fetchall()
+    cursor.execute("SELECT * FROM post")
+    res = cursor.fetchall()
     close()
-    return result
+    return res
 
-if __name__ == "__main__":
+def get_posts_by_category(category_id):
     open()
-
-    cursor.execute("SELECT * FROM quiz")
-    print(cursor.fetchall())
-
-    cursor.execute("SELECT * FROM question")
-    print(cursor.fetchall())
-
+    cursor.execute("SELECT * FROM post WHERE category_id = ?;", [category_id])
+    res = cursor.fetchall()
     close()
+    return res
+
+def add_post(category_id, text):
+    open()
+    cursor.execute(" INSERT INTO post (category_id, text) VALUES (?, ?);", [category_id, text])
+    connection.commit()
+    close()
+
+def deletePost(id):
+    open()
+    cursor.execute(" DELETE FROM post WHERE post_id == ?",  [id])
+    connection.commit()
+    close()
+
+
+def getOnePost(id):
+    open()
+    cursor.execute("SELECT * FROM post WHERE post_id == ?", [id])
+    res = cursor.fetchone()
+    close()
+    return res
